@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multiplication game for pupil</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    table {
+        border-collapse: collapse;
+        margin: 20px auto;
+    }
+    th, td {
+        border: 1px solid #000;
+        padding: 8px 16px;
+        text-align: center;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    #pandaCanvas {
+        display: block;
+        margin: 20px auto;
+        border: 1px solid #000;
+    }
+</style>
+</head>
+<body>
+<h2>Multiplication game for pupil</h2>
+<p>please choose :<input type="number" id="questionNumber" value="10" min="1" max="81"></p>
+<button onclick="startGame()">Start</button>
+<p id="message"></p>
+<table id="multiplicationTable"></table>
+<canvas id="pandaCanvas" width="200" height="200"></canvas>
+
+<script>
+function startGame() {
+    var table = document.getElementById("multiplicationTable");
+    table.innerHTML = "";
+    var questionNumber = parseInt(document.getElementById("questionNumber").value);
+
+    var score = 0;
+
+    for (var i = 1; i <= questionNumber; i++) {
+        var num1 = Math.floor(Math.random() * 9) + 1;
+        var num2 = Math.floor(Math.random() * 9) + 1;
+        var correctAnswer = num1 * num2;
+
+        var row = table.insertRow();
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+
+        cell1.innerHTML = num1 + " × " + num2 + " = ";
+        var input = document.createElement("input");
+        input.type = "number";
+        input.dataset.correctAnswer = correctAnswer;
+        input.addEventListener("input", function() {
+            var inputValue = parseInt(this.value);
+            if (!isNaN(inputValue)) {
+                if (inputValue == this.dataset.correctAnswer) {
+                    score++;
+                    document.getElementById("message").textContent = "Got it!Score:" + score;
+                } else {
+                    document.getElementById("message").textContent = "Think twice, trust yourself";
+                    drawPanda("sad");
+                }
+
+                if (score === questionNumber) {
+                    document.getElementById("message").textContent = "AAAAWESOME !";
+                    drawPanda("happy");
+                }
+            }
+        });
+        cell2.appendChild(input);
+    }
+}
+
+function drawPanda(expression) {
+    var canvas = document.getElementById("pandaCanvas");
+    var ctx = canvas.getContext("2d");
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw panda body
+    ctx.beginPath();
+    ctx.arc(100, 100, 80, 0, 2 * Math.PI);
+    ctx.fillStyle = "#F2F2F2";
+    ctx.fill();
+    ctx.strokeStyle = "#000";
+    ctx.stroke();
+
+    // Draw eyes
+    ctx.beginPath();
+    ctx.arc(70, 70, 10, 0, 2 * Math.PI);
+    ctx.fillStyle = "#000";
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(130, 70, 10, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Draw mouth
+    ctx.beginPath();
+    if (expression === "happy") {
+        ctx.arc(100, 110, 40, 0.2 * Math.PI, 0.8 * Math.PI);
+    } else if (expression === "sad") {
+        ctx.arc(100, 130, 40, 1.2 * Math.PI, 1.8 * Math.PI);
+    }
+    ctx.stroke();
+}
+
+</script>
+</body>
+</html>
